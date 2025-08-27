@@ -5,6 +5,7 @@ const Header = ({ activeTab, setActiveTab }) => {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const dropdownRef = useRef(null);
+  const hoverTimeoutRef = useRef(null);
 
   const tabs = [
     {
@@ -179,145 +180,155 @@ const Header = ({ activeTab, setActiveTab }) => {
     }
   ];
 
-  // Handle clicking outside dropdown to close it
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setActiveDropdown(null);
-      }
-    };
+  // Handle mouse enter with delay
+  const handleMouseEnter = (tabId) => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+    hoverTimeoutRef.current = setTimeout(() => {
+      setActiveDropdown(tabId);
+    }, 150);
+  };
 
-    document.addEventListener('mousedown', handleClickOutside);
+  // Handle mouse leave with delay
+  const handleMouseLeave = () => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+    hoverTimeoutRef.current = setTimeout(() => {
+      setActiveDropdown(null);
+    }, 200);
+  };
+
+  // Handle dropdown mouse enter (cancel close timeout)
+  const handleDropdownMouseEnter = () => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+  };
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+      }
     };
   }, []);
 
   const handleTabClick = (tabId) => {
     setActiveTab(tabId);
-    if (activeDropdown === tabId) {
-      setActiveDropdown(null);
-    } else {
-      setActiveDropdown(tabId);
-    }
   };
 
-  const currentTab = tabs.find(tab => tab.id === activeTab);
+  const currentTab = tabs.find(tab => tab.id === activeDropdown);
 
   return (
     <div className="relative bg-white shadow-lg border-b border-gray-200/60 z-50">
-      {/* macOS-style Top Bar */}
-      <div className="flex items-center justify-between px-6 py-3 bg-gradient-to-r from-gray-50/90 via-white to-gray-50/90 border-b border-gray-200/50">
-        <div className="flex items-center space-x-4">
-          {/* macOS Window Controls */}
-          <div className="flex items-center space-x-1.5">
-            <div className="w-3 h-3 bg-gradient-to-br from-red-400 to-red-500 rounded-full shadow-sm hover:shadow-md transition-shadow cursor-pointer"></div>
-            <div className="w-3 h-3 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full shadow-sm hover:shadow-md transition-shadow cursor-pointer"></div>
-            <div className="w-3 h-3 bg-gradient-to-br from-green-400 to-green-500 rounded-full shadow-sm hover:shadow-md transition-shadow cursor-pointer"></div>
-          </div>
-          
-          <div className="h-5 w-px bg-gray-300/60"></div>
-          
-          {/* App Icon & Title */}
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 rounded-xl flex items-center justify-center shadow-lg">
-              <i className="fas fa-cube text-white text-sm drop-shadow-sm"></i>
-            </div>
-            <h1 className="text-lg font-semibold text-gray-900 tracking-tight">Admin Console</h1>
-          </div>
-        </div>
-        
-        {/* Search & Controls */}
-        <div className="flex items-center space-x-4">
+      {/* Clean Top Bar */}
+      <div className="flex items-center justify-between px-8 py-4 bg-gradient-to-r from-slate-50/90 via-white to-slate-50/90 border-b border-gray-200/50">
+        {/* Search Bar - Centered */}
+        <div className="flex-1 max-w-2xl mx-auto">
           <div className="relative group">
             <input 
               type="text" 
               placeholder="Tell me what you want to do..." 
               onFocus={() => setIsSearchFocused(true)}
               onBlur={() => setIsSearchFocused(false)}
-              className={`w-96 pl-10 pr-4 py-2.5 text-sm border rounded-xl bg-white/70 backdrop-blur-sm focus:outline-none transition-all duration-300 placeholder-gray-500 ${
+              className={`w-full pl-12 pr-6 py-3 text-sm border rounded-2xl bg-white/80 backdrop-blur-sm focus:outline-none transition-all duration-300 placeholder-gray-500 ${
                 isSearchFocused 
-                  ? 'ring-2 ring-blue-500/30 border-blue-400 bg-white shadow-lg' 
-                  : 'border-gray-300/60 hover:border-gray-400/60 hover:bg-white/80'
+                  ? 'ring-2 ring-blue-500/30 border-blue-400 bg-white shadow-xl' 
+                  : 'border-gray-300/60 hover:border-gray-400/60 hover:bg-white shadow-sm'
               }`}
             />
-            <i className={`fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-sm transition-colors ${
+            <i className={`fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-lg transition-colors ${
               isSearchFocused ? 'text-blue-500' : 'text-gray-400'
             }`}></i>
           </div>
-          
-          <div className="flex items-center space-x-1">
-            {['fas fa-cog', 'fas fa-bell', 'fas fa-user-circle', 'fas fa-question-circle'].map((icon, index) => (
-              <button 
-                key={index}
-                className="p-2.5 text-gray-500 hover:text-gray-700 hover:bg-white/80 rounded-xl transition-all duration-200 backdrop-blur-sm group"
-              >
-                <i className={`${icon} text-sm group-hover:scale-110 transition-transform`}></i>
-              </button>
-            ))}
-          </div>
+        </div>
+        
+        {/* Right Controls */}
+        <div className="flex items-center space-x-2 ml-8">
+          {['fas fa-cog', 'fas fa-bell', 'fas fa-user-circle', 'fas fa-question-circle'].map((icon, index) => (
+            <button 
+              key={index}
+              className="p-3 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-xl transition-all duration-200 group"
+            >
+              <i className={`${icon} text-lg group-hover:scale-110 transition-transform`}></i>
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Elegant Tab Navigation */}
+      {/* Professional Tab Navigation */}
       <div className="relative">
-        <div className="flex items-center justify-center px-6 py-1 bg-gradient-to-r from-white via-gray-50/30 to-white">
-          <div className="flex items-center space-x-1">
+        <div className="flex items-center justify-center px-8 py-2 bg-gradient-to-r from-white via-gray-50/50 to-white">
+          <div className="flex items-center space-x-2">
             {tabs.map((tab) => (
-              <button
+              <div
                 key={tab.id}
-                onClick={() => handleTabClick(tab.id)}
-                className={`group relative px-6 py-3 text-sm font-medium transition-all duration-300 flex items-center space-x-2.5 rounded-lg ${
-                  activeTab === tab.id
-                    ? 'text-blue-600 bg-blue-50/80 shadow-sm'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50/60'
-                }`}
+                className="relative"
+                onMouseEnter={() => handleMouseEnter(tab.id)}
+                onMouseLeave={handleMouseLeave}
               >
-                <i className={`${tab.icon} text-sm transition-transform group-hover:scale-110`}></i>
-                <span className="font-medium">{tab.label}</span>
-                <i className={`fas fa-chevron-down text-xs transition-transform duration-200 ${
-                  activeDropdown === tab.id ? 'rotate-180' : ''
-                } ${activeTab === tab.id ? 'text-blue-600' : 'text-gray-400'}`}></i>
-              </button>
+                <button
+                  onClick={() => handleTabClick(tab.id)}
+                  className={`group relative px-8 py-4 text-sm font-medium transition-all duration-300 flex items-center space-x-3 rounded-xl ${
+                    activeTab === tab.id
+                      ? 'text-blue-700 bg-blue-50/90 shadow-md border border-blue-200/50'
+                      : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50/80'
+                  }`}
+                >
+                  <i className={`${tab.icon} text-base transition-transform group-hover:scale-110`}></i>
+                  <span className="font-medium">{tab.label}</span>
+                  <i className={`fas fa-chevron-down text-xs transition-all duration-200 ${
+                    activeDropdown === tab.id ? 'rotate-180 opacity-100' : 'opacity-60'
+                  }`}></i>
+                </button>
+              </div>
             ))}
           </div>
         </div>
 
-        {/* Elegant Dropdown Menu */}
+        {/* Modern Hover Dropdown Menu */}
         {activeDropdown && currentTab && (
           <div 
             ref={dropdownRef}
-            className="absolute top-full left-0 right-0 bg-white/95 backdrop-blur-xl shadow-2xl border-t border-gray-200/50 z-50"
+            className="absolute top-full left-0 right-0 bg-white/98 backdrop-blur-xl shadow-2xl border border-gray-200/60 z-50 animate-in slide-in-from-top-2 duration-200"
+            onMouseEnter={handleDropdownMouseEnter}
+            onMouseLeave={handleMouseLeave}
           >
-            <div className="max-w-7xl mx-auto px-8 py-8">
-              <div className="grid grid-cols-3 gap-8">
+            <div className="max-w-7xl mx-auto px-10 py-10">
+              <div className="grid grid-cols-3 gap-10">
                 {currentTab.sections.map((section, sectionIndex) => (
-                  <div key={sectionIndex} className="space-y-4">
-                    <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide border-b border-gray-200 pb-2">
-                      {section.title}
-                    </h3>
-                    <div className="space-y-1">
+                  <div key={sectionIndex} className="space-y-5">
+                    <div className="flex items-center space-x-2 mb-6">
+                      <div className="w-1 h-6 bg-gradient-to-b from-blue-500 to-blue-600 rounded-full"></div>
+                      <h3 className="text-base font-bold text-gray-900 tracking-wide">
+                        {section.title}
+                      </h3>
+                    </div>
+                    <div className="space-y-2">
                       {section.items.map((item, itemIndex) => (
                         <button
                           key={itemIndex}
                           onClick={() => setActiveDropdown(null)}
-                          className="w-full flex items-start space-x-3 p-3 text-left rounded-xl hover:bg-gray-50/80 transition-all duration-200 group"
+                          className="w-full flex items-start space-x-4 p-4 text-left rounded-xl hover:bg-gradient-to-r hover:from-blue-50/80 hover:to-indigo-50/60 transition-all duration-300 group border border-transparent hover:border-blue-100/50"
                         >
-                          <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center group-hover:from-blue-50 group-hover:to-blue-100 transition-all duration-200">
-                            <i className={`${item.icon} text-sm text-gray-600 group-hover:text-blue-600 transition-colors`}></i>
+                          <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center group-hover:from-blue-100 group-hover:to-blue-200 transition-all duration-300 shadow-sm group-hover:shadow-md">
+                            <i className={`${item.icon} text-base text-gray-600 group-hover:text-blue-700 transition-colors`}></i>
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between">
-                              <h4 className="text-sm font-medium text-gray-900 group-hover:text-blue-900 transition-colors">
+                            <div className="flex items-center justify-between mb-1">
+                              <h4 className="text-base font-semibold text-gray-900 group-hover:text-blue-900 transition-colors">
                                 {item.label}
                               </h4>
                               {item.shortcut && (
-                                <kbd className="px-2 py-0.5 text-xs font-mono text-gray-500 bg-gray-100 rounded border group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors">
+                                <kbd className="px-3 py-1 text-xs font-mono text-gray-500 bg-gray-100/80 rounded-lg border border-gray-200 group-hover:bg-blue-100 group-hover:text-blue-600 group-hover:border-blue-200 transition-all duration-300">
                                   {item.shortcut}
                                 </kbd>
                               )}
                             </div>
-                            <p className="text-xs text-gray-600 mt-0.5 leading-relaxed">
+                            <p className="text-sm text-gray-600 leading-relaxed group-hover:text-gray-700">
                               {item.desc}
                             </p>
                           </div>
@@ -331,14 +342,6 @@ const Header = ({ activeTab, setActiveTab }) => {
           </div>
         )}
       </div>
-
-      {/* Overlay to close dropdown when clicking outside */}
-      {activeDropdown && (
-        <div 
-          className="fixed inset-0 bg-black/10 backdrop-blur-sm z-40"
-          onClick={() => setActiveDropdown(null)}
-        ></div>
-      )}
     </div>
   );
 };
