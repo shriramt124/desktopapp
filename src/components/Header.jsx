@@ -89,7 +89,6 @@ const Header = ({ activeTab, setActiveTab }) => {
           <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center">
             <i className="fas fa-shield-alt text-white text-sm"></i>
           </div>
-          <span className="text-lg font-semibold text-gray-900">Control Panel</span>
         </div>
 
         {/* Navigation Tabs */}
