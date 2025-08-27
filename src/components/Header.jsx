@@ -160,7 +160,7 @@ const Header = ({ activeTab, setActiveTab }) => {
           </div>
         </div>
 
-        {/* Right Controls */}
+        {/* Right me Controls */}
         <div className="flex items-center space-x-2">
           {['fas fa-cog', 'fas fa-bell', 'fas fa-user-circle', 'fas fa-question-circle'].map((icon, index) => (
             <button 
@@ -173,7 +173,7 @@ const Header = ({ activeTab, setActiveTab }) => {
         </div>
       </div>
 
-      {/* Tab Navigation */}
+      {/* Tab ka Navigation */}
       <div className="relative">
         <div className="flex items-center justify-center px-8 py-2 bg-gradient-to-r from-white via-gray-50/50 to-white">
           <div className="flex items-center space-x-2">
