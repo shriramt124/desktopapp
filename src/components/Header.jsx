@@ -160,14 +160,14 @@ const Header = ({ activeTab, setActiveTab }) => {
           </div>
         </div>
 
-        {/* Right me Controls */}
+        {/* Right Controls */}
         <div className="flex items-center space-x-2">
           {['fas fa-cog', 'fas fa-bell', 'fas fa-user-circle', 'fas fa-question-circle'].map((icon, index) => (
             <button 
               key={index}
-              className="p-3 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-xl transition-all duration-200 group"
+              className="p-3 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-xl transition-colors duration-150"
             >
-              <i className={`${icon} text-lg group-hover:scale-110 transition-transform`}></i>
+              <i className={`${icon} text-lg`}></i>
             </button>
           ))}
         </div>
@@ -186,16 +186,16 @@ const Header = ({ activeTab, setActiveTab }) => {
               >
                 <button
                   onClick={() => handleTabClick(tab.id)}
-                  className={`group relative px-6 py-3 text-sm font-medium transition-all duration-300 flex items-center space-x-2 rounded-lg ${
+                  className={`group relative px-6 py-3 text-sm font-medium transition-colors duration-150 flex items-center space-x-2 rounded-lg ${
                     activeTab === tab.id
-                      ? 'text-blue-700 bg-blue-50/90 shadow-md border border-blue-200/50'
-                      : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50/80'
+                      ? 'text-blue-700 bg-blue-50 shadow-sm border border-blue-200'
+                      : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50'
                   }`}
                 >
-                  <i className={`${tab.icon} text-sm transition-transform group-hover:scale-110`}></i>
+                  <i className={`${tab.icon} text-sm`}></i>
                   <span className="font-medium">{tab.label}</span>
-                  <i className={`fas fa-chevron-down text-xs transition-all duration-200 ${
-                    activeDropdown === tab.id ? 'rotate-180 opacity-100' : 'opacity-60'
+                  <i className={`fas fa-chevron-down text-xs transition-transform duration-150 ${
+                    activeDropdown === tab.id ? 'rotate-180' : 'opacity-60'
                   }`}></i>
                 </button>
               </div>
@@ -207,7 +207,7 @@ const Header = ({ activeTab, setActiveTab }) => {
         {activeDropdown && currentTab && (
           <div 
             ref={dropdownRef}
-            className="absolute top-full left-0 right-0 bg-white/98 backdrop-blur-xl shadow-2xl border border-gray-200/60 z-50 animate-in slide-in-from-top-2 duration-200"
+            className="absolute top-full left-0 right-0 bg-white shadow-lg border border-gray-200 z-50"
             onMouseEnter={handleDropdownMouseEnter}
             onMouseLeave={handleMouseLeave}
           >
@@ -219,9 +219,9 @@ const Header = ({ activeTab, setActiveTab }) => {
                       <button
                         onClick={() => !item.submenu && setActiveDropdown(null)}
                         onMouseEnter={() => item.submenu && handleSubmenuHover(item.label)}
-                        className="w-full flex items-center space-x-3 p-3 text-left rounded-lg hover:bg-blue-50 transition-all duration-200 group"
+                        className="w-full flex items-center space-x-3 p-3 text-left rounded-lg hover:bg-blue-50 transition-colors duration-150 group"
                       >
-                        <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center group-hover:from-blue-100 group-hover:to-blue-200 transition-all duration-200">
+                        <div className="flex-shrink-0 w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-blue-100 transition-colors duration-150">
                           <i className={`${item.icon} text-sm text-gray-600 group-hover:text-blue-700`}></i>
                         </div>
                         <div className="flex-1">
@@ -246,9 +246,9 @@ const Header = ({ activeTab, setActiveTab }) => {
                       <button
                         key={index}
                         onClick={() => setActiveDropdown(null)}
-                        className="w-full flex items-center space-x-3 p-3 text-left rounded-lg hover:bg-blue-50 transition-all duration-200 group"
+                        className="w-full flex items-center space-x-3 p-3 text-left rounded-lg hover:bg-blue-50 transition-colors duration-150 group"
                       >
-                        <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center group-hover:from-blue-100 group-hover:to-blue-200 transition-all duration-200">
+                        <div className="flex-shrink-0 w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-blue-100 transition-colors duration-150">
                           <i className={`${subItem.icon} text-sm text-gray-600 group-hover:text-blue-700`}></i>
                         </div>
                         <div className="flex-1">
