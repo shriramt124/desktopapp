@@ -135,6 +135,9 @@ const Header = ({ activeTab, setActiveTab }) => {
           <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center shadow-lg">
             <i className="fas fa-shield-alt text-white text-lg"></i>
           </div>
+          <div>
+            <h1 className="text-xl font-bold text-gray-900">Logo</h1>
+          </div>
         </div>
 
         {/* Search Bar - Centered */}
