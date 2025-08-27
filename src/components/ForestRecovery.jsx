@@ -75,7 +75,6 @@ const ForestRecovery = () => {
         ...cleanupOptions,
         [option]: !cleanupOptions[option]
       };
-      // Update selectAll based on whether all other options are selected
       const otherOptions = Object.keys(newOptions).filter(key => key !== 'selectAll');
       const allSelected = otherOptions.every(key => newOptions[key]);
       newOptions.selectAll = allSelected;
@@ -104,88 +103,98 @@ const ForestRecovery = () => {
   ];
 
   return (
-    <div className="p-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
-      <div className="max-w-7xl mx-auto space-y-8">
-        {/* Header */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
-          <div className="flex items-center space-x-4 mb-6">
-            <div className="p-4 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl shadow-lg">
-              <i className="fas fa-tree text-white text-2xl"></i>
+    <div className="bg-gray-50 min-h-screen">
+      {/* Minimal Header */}
+      <div className="bg-white border-b border-gray-200 px-6 py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
+              <i className="fas fa-tree text-white text-sm"></i>
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Forest Recovery</h1>
-              <p className="text-gray-600 mt-1">Recover and restore your Active Directory forest</p>
+              <h1 className="text-lg font-semibold text-gray-900">Forest Recovery</h1>
+              <p className="text-sm text-gray-600">Recover and restore your Active Directory forest</p>
             </div>
           </div>
-          
-          <button className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 flex items-center space-x-2">
-            <i className="fas fa-sync-alt"></i>
+          <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center space-x-2">
+            <i className="fas fa-sync-alt text-sm"></i>
             <span>Refresh Forest Discovery</span>
           </button>
         </div>
+      </div>
 
-        {/* Domain Controllers Table */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
-          <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
-            <h2 className="text-xl font-bold text-gray-900 mb-2">Select Domain Controller(s) for Forest Recovery:</h2>
+      <div className="p-6 space-y-6">
+        {/* Domain Controllers Section */}
+        <div className="bg-white rounded-lg border border-gray-200">
+          <div className="p-4 border-b border-gray-200">
+            <h2 className="text-base font-semibold text-gray-900">Select Domain Controller(s) for Forest Recovery:</h2>
           </div>
           
           <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gradient-to-r from-gray-100 to-gray-50">
+            <table className="w-full text-sm">
+              <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-4 text-left">
-                    <label className="flex items-center cursor-pointer">
+                  <th className="px-4 py-3 text-left w-12">
+                    <label className="flex items-center">
                       <input
                         type="checkbox"
                         checked={selectAll}
                         onChange={handleSelectAll}
-                        className="w-5 h-5 text-blue-600 border-2 border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                       />
-                      <span className="ml-3 text-sm font-semibold text-gray-700">Select All</span>
+                      <span className="sr-only">Select All</span>
                     </label>
                   </th>
-                  {['Type', 'Domain', 'DomainSid', 'Site', 'SamAccountN...', 'NetBIOS', 'FQDN', 'IsGC', 'IsRO', 'IPv4Address'].map((header) => (
-                    <th key={header} className="px-6 py-4 text-left text-sm font-semibold text-gray-700 border-l border-gray-200">
-                      {header}
-                    </th>
-                  ))}
+                  <th className="px-4 py-3 text-left font-medium text-gray-700">Type</th>
+                  <th className="px-4 py-3 text-left font-medium text-gray-700">Domain</th>
+                  <th className="px-4 py-3 text-left font-medium text-gray-700">DomainSid</th>
+                  <th className="px-4 py-3 text-left font-medium text-gray-700">Site</th>
+                  <th className="px-4 py-3 text-left font-medium text-gray-700">SamAccountN...</th>
+                  <th className="px-4 py-3 text-left font-medium text-gray-700">NetBIOS</th>
+                  <th className="px-4 py-3 text-left font-medium text-gray-700">FQDN</th>
+                  <th className="px-4 py-3 text-left font-medium text-gray-700">IsGC</th>
+                  <th className="px-4 py-3 text-left font-medium text-gray-700">IsRO</th>
+                  <th className="px-4 py-3 text-left font-medium text-gray-700">IPv4Address</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {domainControllers.map((dc) => (
                   <tr 
                     key={dc.id} 
-                    className={`hover:bg-blue-50 transition-colors duration-150 ${selectedRows.has(dc.id) ? 'bg-blue-50 ring-2 ring-blue-200' : ''}`}
+                    className={`hover:bg-gray-50 ${selectedRows.has(dc.id) ? 'bg-blue-50' : ''}`}
                   >
-                    <td className="px-6 py-4">
-                      <label className="flex items-center cursor-pointer">
+                    <td className="px-4 py-3">
+                      <label className="flex items-center">
                         <input
                           type="checkbox"
                           checked={selectedRows.has(dc.id)}
                           onChange={() => handleRowSelect(dc.id)}
-                          className="w-5 h-5 text-blue-600 border-2 border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                         />
                       </label>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-900 font-medium border-l border-gray-100">{dc.type}</td>
-                    <td className="px-6 py-4 text-sm text-gray-700 border-l border-gray-100">{dc.domain}</td>
-                    <td className="px-6 py-4 text-sm text-gray-700 border-l border-gray-100 font-mono">{dc.domainSid}</td>
-                    <td className="px-6 py-4 text-sm text-gray-700 border-l border-gray-100">{dc.site}</td>
-                    <td className="px-6 py-4 text-sm text-gray-700 border-l border-gray-100 font-mono">{dc.samAccountName}</td>
-                    <td className="px-6 py-4 text-sm text-gray-700 border-l border-gray-100 font-mono">{dc.netBIOS}</td>
-                    <td className="px-6 py-4 text-sm text-gray-700 border-l border-gray-100 font-mono">{dc.fqdn}</td>
-                    <td className="px-6 py-4 text-sm border-l border-gray-100">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${dc.isGC ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                    <td className="px-4 py-3 text-gray-900">{dc.type}</td>
+                    <td className="px-4 py-3 text-gray-700">{dc.domain}</td>
+                    <td className="px-4 py-3 text-gray-700 font-mono text-xs">{dc.domainSid}</td>
+                    <td className="px-4 py-3 text-gray-700">{dc.site}</td>
+                    <td className="px-4 py-3 text-gray-700 font-mono text-xs">{dc.samAccountName}</td>
+                    <td className="px-4 py-3 text-gray-700 font-mono text-xs">{dc.netBIOS}</td>
+                    <td className="px-4 py-3 text-gray-700 font-mono text-xs">{dc.fqdn}</td>
+                    <td className="px-4 py-3">
+                      <span className={`px-2 py-1 rounded text-xs font-medium ${
+                        dc.isGC ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                      }`}>
                         {dc.isGC ? 'True' : 'False'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm border-l border-gray-100">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${!dc.isRO ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                    <td className="px-4 py-3">
+                      <span className={`px-2 py-1 rounded text-xs font-medium ${
+                        !dc.isRO ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                      }`}>
                         {dc.isRO ? 'True' : 'False'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-700 border-l border-gray-100 font-mono">{dc.ipv4Address}</td>
+                    <td className="px-4 py-3 text-gray-700 font-mono text-xs">{dc.ipv4Address}</td>
                   </tr>
                 ))}
               </tbody>
@@ -193,53 +202,57 @@ const ForestRecovery = () => {
           </div>
         </div>
 
-        {/* Clean-up Options */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
-          <div className="flex items-center space-x-3 mb-8">
-            <div className="p-3 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl shadow-lg">
-              <i className="fas fa-broom text-white text-xl"></i>
+        {/* Clean-up Section */}
+        <div className="bg-white rounded-lg border border-gray-200">
+          <div className="p-4 border-b border-gray-200">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+                <i className="fas fa-broom text-white text-sm"></i>
+              </div>
+              <h2 className="text-base font-semibold text-gray-900">Clean-up</h2>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900">Clean-up</h2>
           </div>
 
-          {/* Select All Checkbox */}
-          <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
-            <label className="flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                checked={cleanupOptions.selectAll}
-                onChange={() => handleCleanupOption('selectAll')}
-                className="w-6 h-6 text-blue-600 border-2 border-blue-300 rounded focus:ring-3 focus:ring-blue-500 focus:border-blue-500"
-              />
-              <span className="ml-4 text-lg font-semibold text-blue-900">Select All</span>
-            </label>
-          </div>
-
-          {/* Cleanup Options Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {cleanupItems.map((item) => (
-              <label key={item.key} className="flex items-center p-4 bg-gray-50 hover:bg-gray-100 rounded-xl cursor-pointer transition-colors duration-150 border border-gray-200 hover:border-gray-300">
+          <div className="p-4 space-y-4">
+            {/* Select All */}
+            <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+              <label className="flex items-center">
                 <input
                   type="checkbox"
-                  checked={cleanupOptions[item.key]}
-                  onChange={() => handleCleanupOption(item.key)}
-                  className="w-5 h-5 text-blue-600 border-2 border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  checked={cleanupOptions.selectAll}
+                  onChange={() => handleCleanupOption('selectAll')}
+                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 />
-                <span className="ml-3 text-sm font-medium text-gray-700">{item.label}</span>
+                <span className="ml-3 text-sm font-medium text-blue-900">Select All</span>
               </label>
-            ))}
-          </div>
+            </div>
 
-          {/* Action Buttons */}
-          <div className="flex space-x-4 mt-8 pt-6 border-t border-gray-200">
-            <button className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white px-8 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 flex items-center space-x-2">
-              <i className="fas fa-play"></i>
-              <span>Start</span>
-            </button>
-            <button className="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white px-8 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 flex items-center space-x-2">
-              <i className="fas fa-times"></i>
-              <span>Exit</span>
-            </button>
+            {/* Cleanup Options */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {cleanupItems.map((item) => (
+                <label key={item.key} className="flex items-center p-3 bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 cursor-pointer transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={cleanupOptions[item.key]}
+                    onChange={() => handleCleanupOption(item.key)}
+                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <span className="ml-3 text-sm text-gray-700">{item.label}</span>
+                </label>
+              ))}
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex space-x-3 pt-4 border-t border-gray-200">
+              <button className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-lg text-sm font-medium transition-colors flex items-center space-x-2">
+                <i className="fas fa-play text-sm"></i>
+                <span>Start</span>
+              </button>
+              <button className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg text-sm font-medium transition-colors flex items-center space-x-2">
+                <i className="fas fa-times text-sm"></i>
+                <span>Exit</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
